@@ -1,0 +1,8 @@
+[package]
+name = "mathias_rust"
+version = "0.1.0"
+authors = ["Ross Todd <rosstod@gmail.com>"]
+edition = "2018"
+
+[dependencies]
+gotham = "0.3.0"
