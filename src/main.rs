@@ -1,36 +1,28 @@
-extern crate gotham;
+#![feature(proc_macro_hygiene, decl_macro)]
 
-use gotham::state::State;
-
-const HELLO_WORLD: &'static str = "Hello World";
-
-pub fn say_hello(state: State) -> (State, &'static str) {
-    (state, HELLO_WORLD)
-}
-
-pub fn main() {
-    let addr = "127.0.0.1:8000";
-    println!("Listening for requests at http://{}", addr);
-    gotham::start(addr, || Ok(say_hello))
-}
+#[macro_use] extern crate rocket;
+#[macro_use] extern crate rocket_contrib;
+#[macro_use] extern crate serde_derive;
 
 #[cfg(test)]
-mod tests {
-    use super::*;
-    use gotham::test::TestServer;
+mod tests;
 
-    #[test]
-    fn receive_hello_world_response() {
-        let test_server = TestServer::new(|| Ok(say_hello)).unwrap();
-        let response = test_server
-            .client()
-            .get("http://localhost")
-            .perform()
-            .unwrap();
+use rocket::{get, routes};
+use rocket_contrib::json::{Json, JsonValue};
 
-        assert_eq!(response.status(), StatusCode::Ok);
+#[get("/")]
+fn hello() -> &'static str {
+    "Hello, Rust 2018!"
+}
 
-        let body = response.read_body().unwrap();
-        assert_eq!(&body[..], b"Hello World!");
-    }
+#[catch(404)]
+fn not_found() -> JsonValue {
+    json!({
+        "status": "error",
+        "reason": "Resource was not found."
+    })
+}
+
+fn main() {
+    rocket::ignite().mount("/", routes![hello]).launch();
 }
