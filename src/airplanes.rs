@@ -1,24 +1,9 @@
 use diesel::pg::PgConnection;
+use diesel::prelude::*;
+use schema::airplanes;
 
-pub mod schema {
-    table! {
-        aircrafts {
-            id -> Nullable<Integer>,
-            name  -> Text,
-            description  -> Text,
-            year_in_service -> Integer,
-            country_of_origin -> Text,
-            operators -> Text,
-            max_speed -> Integer,
-            max_range -> Integer,
-            ceiling -> Integer,
-            engines -> Text,
-            img_url -> Text,
-        }
-    }
-}
-
-pub struct Airplanes {
+#[derive(Debug, Queryable, Serialize, Deserialize)]
+pub struct Aircrafts {
     pub id: Option<i32>,
     pub name: String,
     pub description: String,
@@ -32,11 +17,16 @@ pub struct Airplanes {
     pub img_url: String,
 }
 
-impl Airplanes {
-    pub fn read(connection: &PgConnection) -> Vec<Airplanes> {
-        aircrafts::table
-            .order(aircrafts::id)
-            .load::<Airplanes>(connection)
+impl Aircrafts {
+    pub fn read(connection: &PgConnection) -> Vec<Aircrafts> {
+        println!("In Read Function");
+        println!("{:?}", airplanes::table);
+
+        airplanes::table
+            .order(airplanes::id)
+            .load::<Aircrafts>(connection)
             .unwrap()
     }
 }
+
+// DATABASE_URL=postgres://localhost/aircraft_project_dev

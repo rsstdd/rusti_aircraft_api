@@ -12,10 +12,13 @@ extern crate log;
 extern crate rocket;
 #[macro_use]
 extern crate rocket_contrib;
+#[macro_use]
+extern crate serde_derive;
 
 mod airplanes;
 mod pg_pool;
-use airplanes::Airplanes;
+mod schema;
+use airplanes::Aircrafts;
 
 use rocket_contrib::json::{Json, JsonValue};
 
@@ -27,9 +30,10 @@ fn index() -> &'static str {
     "Hello, Rust 2018!"
 }
 
-#[get("/api/aircraft")]
-fn read(connection: pg_pool::Connection) -> Json<Value> {
-    Json(Airplanes::read(&connection))
+#[get("/aircraft")]
+fn read(connection: pg_pool::Connection) -> Json<JsonValue> {
+    println!("IN READ");
+    Json(json!(Aircrafts::read(&connection)))
 }
 
 #[catch(404)]
@@ -46,7 +50,7 @@ fn main() {
     rocket::ignite()
         .manage(pg_pool::connect(&database_url))
         .mount("/api/", routes![index])
-        .mount("/api/aircraft", routes![read])
+        .mount("/api", routes![read])
         .register(catchers![not_found])
         .launch();
 }
