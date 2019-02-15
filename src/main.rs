@@ -29,6 +29,15 @@ fn read(connection: pg_pool::Connection) -> Json<JsonValue> {
     Json(json!(Airplane::read(&connection)))
 }
 
+#[post("/aircraft", data = "<aircraft>")]
+fn create(aircraft: Json<Airplane>, connection: pg_pool::Connection) -> Json<JsonValue> {
+    let insert_aircraft = Airplane {
+        id: None,
+        ..aircraft.into_inner()
+    };
+    Json(json!(Airplane::create(insert_aircraft, &connection)))
+}
+
 #[get("/aircraft/<id>")]
 fn read_id(id: i32, connection: pg_pool::Connection) -> Json<JsonValue> {
     Json(json!(Airplane::read_id(id, &connection)))
@@ -46,6 +55,11 @@ fn update(id: i32, aircraft: Json<Airplane>, connection: pg_pool::Connection) ->
     Json(json!(Airplane::update(id, updated_aircraft, &connection)))
 }
 
+#[delete("/aircraft/<id>")]
+fn delete(id: i32, connection: pg_pool::Connection) -> Json<JsonValue> {
+    Json(json!({ "success": Airplane::delete(id, &connection) }))
+}
+
 #[catch(404)]
 fn not_found() -> JsonValue {
     json!({
@@ -60,7 +74,7 @@ fn main() {
     rocket::ignite()
         .manage(pg_pool::connect(&database_url))
         .mount("/api/", routes![index])
-        .mount("/api/", routes![read, read_id, update])
+        .mount("/api/", routes![create, read, read_id, update, delete])
         .register(catchers![not_found])
         .launch();
 }

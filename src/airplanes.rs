@@ -3,7 +3,7 @@ use diesel::prelude::*;
 
 use crate::schema::airplanes;
 
-#[derive(AsChangeset, Debug, Queryable, Serialize, Deserialize)]
+#[derive(AsChangeset, Debug, Queryable, Insertable, Serialize, Deserialize)]
 pub struct Airplane {
     pub id: Option<i32>,
     pub name: String,
@@ -26,6 +26,18 @@ impl Airplane {
             .unwrap()
     }
 
+    pub fn create(aircraft: Airplane, connection: &PgConnection) -> Airplane {
+        diesel::insert_into(airplanes::table)
+            .values(&aircraft)
+            .execute(connection)
+            .expect("Error creating new hero");
+
+        airplanes::table
+            .order(airplanes::id.desc())
+            .first(connection)
+            .unwrap()
+    }
+
     pub fn read_id(id: i32, connection: &PgConnection) -> Vec<Airplane> {
         airplanes::table
             .find(id)
@@ -37,6 +49,12 @@ impl Airplane {
         println!("{:?}", aircraft);
         diesel::update(airplanes::table.find(id))
             .set(&aircraft)
+            .execute(connection)
+            .is_ok()
+    }
+
+    pub fn delete(id: i32, connection: &PgConnection) -> bool {
+        diesel::delete(airplanes::table.find(id))
             .execute(connection)
             .is_ok()
     }
