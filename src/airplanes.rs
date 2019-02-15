@@ -19,14 +19,17 @@ pub struct Aircrafts {
 
 impl Aircrafts {
     pub fn read(connection: &PgConnection) -> Vec<Aircrafts> {
-        println!("In Read Function");
-        println!("{:?}", airplanes::table);
-
         airplanes::table
             .order(airplanes::id)
             .load::<Aircrafts>(connection)
             .unwrap()
     }
-}
 
-// DATABASE_URL=postgres://localhost/aircraft_project_dev
+    pub fn read_id(id: i32, connection: &PgConnection) -> Vec<Aircrafts> {
+        println!("{}", id);
+        airplanes::table
+            .find(id)
+            .load::<Aircrafts>(connection)
+            .unwrap()
+    }
+}

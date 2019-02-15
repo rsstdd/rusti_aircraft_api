@@ -1,11 +1,8 @@
 #![feature(proc_macro_hygiene, decl_macro)]
 #![feature(custom_attribute)]
 
-// extern crate bcrypt;
-// extern crate chrono;
 #[macro_use]
 extern crate diesel;
-// extern crate diesel_migrations;
 extern crate dotenv;
 extern crate log;
 #[macro_use]
@@ -36,11 +33,16 @@ fn read(connection: pg_pool::Connection) -> Json<JsonValue> {
     Json(json!(Aircrafts::read(&connection)))
 }
 
+#[get("/aircraft/<id>")]
+fn read_id(id: i32, connection: pg_pool::Connection) -> Json<JsonValue> {
+    Json(json!(Aircrafts::read_id(id, &connection)))
+}
+
 #[catch(404)]
 fn not_found() -> JsonValue {
     json!({
         "status": "error",
-        "reason": "Resourcce was not found."
+        "reason": "Resource was not found."
     })
 }
 
@@ -50,7 +52,7 @@ fn main() {
     rocket::ignite()
         .manage(pg_pool::connect(&database_url))
         .mount("/api/", routes![index])
-        .mount("/api", routes![read])
+        .mount("/api/", routes![read, read_id])
         .register(catchers![not_found])
         .launch();
 }
