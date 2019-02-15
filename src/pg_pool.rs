@@ -1,8 +1,10 @@
-use diesel::pg::PgConnection;
-use diesel::r2d2::{ConnectionManager, Pool, PooledConnection};
-use rocket::http::Status;
-use rocket::request::{self, FromRequest};
-use rocket::{Outcome, Request, State};
+use crate::{
+    diesel::pg::PgConnection,
+    diesel::r2d2::{ConnectionManager, Pool, PooledConnection},
+    rocket::http::Status,
+    rocket::request::{self, FromRequest},
+    rocket::{Outcome, Request, State},
+};
 use std::ops::Deref;
 
 type ManagedPgConn = ConnectionManager<PgConnection>;

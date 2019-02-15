@@ -1,9 +1,10 @@
 use diesel::pg::PgConnection;
 use diesel::prelude::*;
-use schema::airplanes;
 
-#[derive(Debug, Queryable, Serialize, Deserialize)]
-pub struct Aircrafts {
+use crate::schema::airplanes;
+
+#[derive(AsChangeset, Debug, Queryable, Serialize, Deserialize)]
+pub struct Airplane {
     pub id: Option<i32>,
     pub name: String,
     pub description: String,
@@ -17,19 +18,26 @@ pub struct Aircrafts {
     pub img_url: String,
 }
 
-impl Aircrafts {
-    pub fn read(connection: &PgConnection) -> Vec<Aircrafts> {
+impl Airplane {
+    pub fn read(connection: &PgConnection) -> Vec<Airplane> {
         airplanes::table
             .order(airplanes::id)
-            .load::<Aircrafts>(connection)
+            .load::<Airplane>(connection)
             .unwrap()
     }
 
-    pub fn read_id(id: i32, connection: &PgConnection) -> Vec<Aircrafts> {
-        println!("{}", id);
+    pub fn read_id(id: i32, connection: &PgConnection) -> Vec<Airplane> {
         airplanes::table
             .find(id)
-            .load::<Aircrafts>(connection)
+            .load::<Airplane>(connection)
             .unwrap()
+    }
+
+    pub fn update(id: i32, aircraft: Airplane, connection: &PgConnection) -> bool {
+        println!("{:?}", aircraft);
+        diesel::update(airplanes::table.find(id))
+            .set(&aircraft)
+            .execute(connection)
+            .is_ok()
     }
 }
