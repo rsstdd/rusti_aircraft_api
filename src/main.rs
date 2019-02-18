@@ -14,9 +14,11 @@ mod airplanes;
 mod models;
 mod pg_pool;
 mod schema;
+mod users;
 
 use crate::airplanes::Airplane;
 use crate::rocket_contrib::json::{Json, JsonValue};
+
 use std::env;
 
 #[get("/")]
@@ -71,10 +73,13 @@ fn not_found() -> JsonValue {
 fn main() {
     dotenv::dotenv().ok();
     let database_url = env::var("DATABASE_URL").expect("DATABASE_URL must be set");
-    rocket::ignite()
+
+    let mut rocket = rocket::ignite()
         .manage(pg_pool::connect(&database_url))
         .mount("/api/", routes![index])
         .mount("/api/", routes![create, read, read_id, update, delete])
-        .register(catchers![not_found])
-        .launch();
+        .register(catchers![not_found]);
+
+    rocket = users::mount(rocket);
+    rocket.launch();
 }

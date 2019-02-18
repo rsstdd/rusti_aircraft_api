@@ -3,23 +3,16 @@ use diesel::prelude::*;
 
 use crate::schema::airplanes;
 
-#[table_name = "airplanes"]
 #[derive(AsChangeset, Debug, Queryable, Insertable, Serialize, Deserialize)]
-pub struct Airplane {
+pub struct Users {
     pub id: Option<i32>,
-    pub name: String,
-    pub description: String,
-    pub year_in_service: i32,
-    pub country_of_origin: String,
-    pub operators: String,
-    pub max_speed: i32,
-    pub max_range: i32,
-    pub ceiling: i32,
-    pub engines: String,
-    pub img_url: String,
+    pub first_name: String,
+    pub last_name: String,
+    pub email: String,
+    pub hashed_password: String,
 }
 
-impl Airplane {
+impl Users {
     pub fn read(connection: &PgConnection) -> Vec<Airplane> {
         airplanes::table
             .order(airplanes::id)
@@ -31,7 +24,7 @@ impl Airplane {
         diesel::insert_into(airplanes::table)
             .values(&aircraft)
             .execute(connection)
-            .expect("Error creating new Aircraft");
+            .expect("Error creating new hero");
 
         airplanes::table
             .order(airplanes::id.desc())
@@ -47,7 +40,6 @@ impl Airplane {
     }
 
     pub fn update(id: i32, aircraft: Airplane, connection: &PgConnection) -> bool {
-        println!("{:?}", aircraft);
         diesel::update(airplanes::table.find(id))
             .set(&aircraft)
             .execute(connection)
