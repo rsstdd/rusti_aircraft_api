@@ -10,6 +10,7 @@ extern crate rocket_contrib;
 #[macro_use]
 extern crate serde_derive;
 
+mod cors;
 mod airplanes;
 mod models;
 mod pg_pool;
@@ -76,5 +77,6 @@ fn main() {
         .mount("/api/", routes![index])
         .mount("/api/", routes![create, read, read_id, update, delete])
         .register(catchers![not_found])
+        .attach(cors::CorsFairing)
         .launch();
 }

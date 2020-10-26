@@ -30,7 +30,7 @@ impl Airplane {
         diesel::insert_into(airplanes::table)
             .values(&aircraft)
             .execute(connection)
-            .expect("Error creating new hero");
+            .expect("Error creating new Aircraft");
 
         airplanes::table
             .order(airplanes::id.desc())
