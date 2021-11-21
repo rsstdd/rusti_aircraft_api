@@ -1,11 +1,11 @@
-use crate::{
+use std::ops::Deref;
+use {
     diesel::pg::PgConnection,
     diesel::r2d2::{ConnectionManager, Pool, PooledConnection},
     rocket::http::Status,
     rocket::request::{self, FromRequest},
     rocket::{Outcome, Request, State},
 };
-use std::ops::Deref;
 
 type ManagedPgConn = ConnectionManager<PgConnection>;
 type PgPool = Pool<ManagedPgConn>;

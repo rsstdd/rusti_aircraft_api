@@ -1,21 +1,16 @@
 [package]
-name = "mathias_rust"
+name = "aircraft-backend"
 version = "0.1.0"
-authors = ["Ross Todd <rosstod@gmail.com>"]
-edition = "2018"
+authors = ["Ross Todd <rssmtdd@gmail.com>"]
+edition = "2021"
 
-[dependencies]
-diesel = { version = "1.4.1", features = ["postgres", "r2d2"] }
-diesel_migrations = "1.4.0"
-dotenv = "0.13.0"
-rocket = "0.4.2"
-serde = "1.0.87"
-serde_json = "1.0.38"
-serde_derive = "1.0.87"
-rocket_codegen = "0.4.0"
-r2d2 = "0.8.3"
+[depndencies]
+diesel = { version = "1.4.8", features = ["postgres"] }
+dotenv = "0.15"
 
-[dependencies.rocket_contrib]
-version = "0.4.2"
-default-features = false
-features = ["json"]
+[[bin]]
+name = "get"
+doc = false
+
+[lib]
+doc = false
